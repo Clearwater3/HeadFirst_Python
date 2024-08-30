@@ -20,11 +20,36 @@ def read_swim_data(filename):
     # average = str(minutes) + ":" + str(seconds) + "." + hundredths original line of code
     average = f"{minutes}:{seconds:0>2}.{hundredths}" # f string variant, easier to read, shorter
     return swimmer, age, distance, stroke, times, average, converts # tuple
+
 import statistics
 FOLDER = "swimdata/"
 
 import hfpy_utils
 CHARTS = "charts/"
+
+import os
+print(os.getcwd())
+
+import json
+JSONDATA = "webapp/records.json"
+
+def event_lookup(event):
+    """Convert from filenames to dictionary keys.
+
+    Given an event discriptor (the name of the swimmers file), convert the descriptor into lookup 
+    key which can be used with the records dictionary
+    """
+    conversions = {
+        "Free": "freestyle",
+        "Back": "backstroke",
+        "Breast": "breaststroke",
+        "Fly": "butterfly",
+        "IM": "individual medley"
+    }
+    *_, distance, stroke = event.removesuffix(".txt").split("-")
+
+    return f"{distance} {conversions[stroke]}"
+
 
 def produce_bar_chart(fn, location=CHARTS):
     """Given the name of a swimmer's file, produce a HTML/SVG-basetd bar chart.
@@ -52,8 +77,17 @@ def produce_bar_chart(fn, location=CHARTS):
                         <svg height="30" width="400">
                             <rect height="30" width="{bar_width}" style="fill:rgb(0,0,255);" />
                         </svg>{t}<br />"""
-    footer = f""""
+        
+    with open(JSONDATA) as jf:
+        records = json.load(jf)
+    COURSES = ("LC Men", "LC Women", "SC Men", "SC Women")
+    times = []
+    for course in COURSES:
+        times.append(records[course][event_lookup(fn)])  
+
+    footer = f"""
                         <p>Average time: {average}<p>
+                        <p>M: {times[0]} ({times[2]})<br />W: {times[1]} ({times[3]})<p/>
                     </body>
                 </html>"""
     page = header + body + footer
