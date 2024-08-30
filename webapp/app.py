@@ -63,7 +63,7 @@ def display_swimmers_files():
 @app.post("/showbarchart")
 def show_bar_chart():
     file_id = request.form["file"]
-    location = swimclub.produce_bar_chart(file_id, "templates/")
+    location = swimclub.produce_bar_chart(file_id, "webapp/templates/")
     return render_template(location.split("/")[-1])
 
 

@@ -1,1 +1,12 @@
 *.ipynb
+*.DS_Store
+webapp/swimdata/.DS_Store
+
+# Ignore all HTML files
+*.html
+
+# Exceptions: Do not ignore these specific HTML files
+!webapp/templates/base.html
+!webapp/templates/index.html
+!webapp/templates/select.html
+!bar.html
